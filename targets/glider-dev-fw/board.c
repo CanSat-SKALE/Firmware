@@ -40,13 +40,13 @@ void __early_init(void) {
 bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
     (void)sdcp;
-    return !palReadPad(GPIOC, GPIOC_SDCARD_DETECT);
+    return true;
 }
 
 bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
     (void)sdcp;
-    return FALSE;
+    return false;
 }
 #endif
 
