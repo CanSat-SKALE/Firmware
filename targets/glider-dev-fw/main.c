@@ -19,6 +19,9 @@ int main(void)
     chSysInit();
 
     while (true) {
+        palSetPad(GPIOB, GPIOB_LED_HEARTBEAT);
+        chThdSleepMilliseconds(500);
+        palClearPad(GPIOB, GPIOB_LED_HEARTBEAT);
         chThdSleepMilliseconds(500);
     }
 }

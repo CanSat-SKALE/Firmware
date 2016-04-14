@@ -224,7 +224,7 @@ GLOBAL_SRC_DEP =  $(PROJROOT)/src/src.mk
 
 RULESPATH = $(PROJROOT)
 include $(PROJROOT)/rules.mk
--include tools.mk
+-include $(PROJROOT)/tools.mk
 
 PRE_MAKE_ALL_RULE_HOOK:
 	cd $(PROJROOT) && ./git_revision.sh
