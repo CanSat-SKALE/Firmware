@@ -6,8 +6,8 @@
 void panic_handler(const char *reason)
 {
     (void)reason;
+    palSetPad(GPIOB, GPIOB_LED_ERR);
     while (1) {
-
     }
 }
 
