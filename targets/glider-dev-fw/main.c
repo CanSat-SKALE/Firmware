@@ -2,6 +2,7 @@
 #include <hal.h>
 #include <chprintf.h>
 
+#include "sensor_readout.h"
 
 void panic_handler(const char *reason)
 {
@@ -23,6 +24,8 @@ int main(void)
     pwr_gps(true);
     pwr_sdcard(true);
     pwr_5V(true);
+
+    sensor_readout_start();
 
     while (true) {
         led_heartbeat(true);
