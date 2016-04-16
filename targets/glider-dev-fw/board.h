@@ -526,6 +526,7 @@
 extern "C" {
 #endif
 
+#define chstdout (BaseSequentialStream*)&SD6
 
 #define boardInit() board_init()
 
