@@ -52,6 +52,8 @@ int main(void)
     sdStart(&SD3, NULL);
     sdStart(&SD6, NULL);
 
+    log_info("=== boot ===");
+
     static const I2CConfig i2c_cfg = {
         .op_mode = OPMODE_I2C,
         .clock_speed = 400000,
@@ -59,7 +61,6 @@ int main(void)
     };
     i2cStart(&I2CD1, &i2c_cfg);
 
-    log_info("=== boot ===");
 
     pwr_gps(true);
     pwr_sdcard(true);
