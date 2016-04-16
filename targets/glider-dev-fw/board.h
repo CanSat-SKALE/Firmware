@@ -532,6 +532,15 @@ extern "C" {
 void board_init(void);
 
 
+void led_sdcard(bool en);
+void led_heartbeat(bool en);
+void led_error(bool en);
+
+void pwr_sdcard(bool en);
+void pwr_gps(bool en);
+void pwr_5V(bool en);
+
+
 #ifdef __cplusplus
 }
 #endif

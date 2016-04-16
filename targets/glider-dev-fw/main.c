@@ -6,7 +6,9 @@
 void panic_handler(const char *reason)
 {
     (void)reason;
-    palSetPad(GPIOB, GPIOB_LED_ERR);
+    led_heartbeat(true);
+    led_error(true);
+    led_sdcard(true);
     while (1) {
     }
 }
@@ -18,10 +20,14 @@ int main(void)
     halInit();
     chSysInit();
 
+    pwr_gps(true);
+    pwr_sdcard(true);
+    pwr_5V(true);
+
     while (true) {
-        palSetPad(GPIOB, GPIOB_LED_HEARTBEAT);
+        led_heartbeat(true);
         chThdSleepMilliseconds(500);
-        palClearPad(GPIOB, GPIOB_LED_HEARTBEAT);
+        led_heartbeat(false);
         chThdSleepMilliseconds(500);
     }
 }

@@ -51,6 +51,63 @@ bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 #endif
 
 
+void led_sdcard(bool en)
+{
+    if (en) {
+        palSetPad(GPIOB, GPIOB_LED_SDCARD);
+    } else {
+        palClearPad(GPIOB, GPIOB_LED_SDCARD);
+    }
+}
+
+
+void led_heartbeat(bool en)
+{
+    if (en) {
+        palSetPad(GPIOB, GPIOB_LED_HEARTBEAT);
+    } else {
+        palClearPad(GPIOB, GPIOB_LED_HEARTBEAT);
+    }
+}
+
+void led_error(bool en)
+{
+    if (en) {
+        palSetPad(GPIOB, GPIOB_LED_ERR);
+    } else {
+        palClearPad(GPIOB, GPIOB_LED_ERR);
+    }
+}
+
+void pwr_sdcard(bool en)
+{
+    if (en) {
+        palClearPad(GPIOC, GPIOC_SDCARD_SHDN);
+    } else {
+        palSetPad(GPIOC, GPIOC_SDCARD_SHDN);
+    }
+}
+
+void pwr_gps(bool en)
+{
+    if (en) {
+        palClearPad(GPIOC, GPIOC_GPS_SHDN);
+    } else {
+        palSetPad(GPIOC, GPIOC_GPS_SHDN);
+    }
+}
+
+void pwr_5V(bool en)
+{
+    if (en) {
+        palSetPad(GPIOA, GPIOA_SHDN_5V);
+    } else {
+        palClearPad(GPIOA, GPIOA_SHDN_5V);
+    }
+}
+
+
+
 void board_init(void) {
 }
 
