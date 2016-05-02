@@ -3,6 +3,7 @@
 #include "log.h"
 #include "chprintf.h"
 #include "blocking_uart_driver.h"
+#include "comm.h"
 
 #include "sensor_readout.h"
 
@@ -67,6 +68,7 @@ int main(void)
     pwr_5V(true);
 
     sensor_readout_start();
+    comm_start();
 
     while (true) {
         led_heartbeat(true);
