@@ -41,7 +41,17 @@ void panic_handler(const char *reason)
         }
     }
 }
+static THD_WORKING_AREA(waHeartBeat, 256);
+static THD_FUNCTION(HeartBeat, arg) {
 
+  (void)arg;
+  chRegSetThreadName("HeartBeat");
+  
+  while (true) {
+    palTogglePad(GPIOB, GPIOB_LED_HEARTBEAT);     
+    chThdSleepMilliseconds(100);
+  }
+}
 
 int main(void)
 {
@@ -70,10 +80,12 @@ int main(void)
     sensor_readout_start();
     comm_start();
 
+    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
     while (true) {
-        led_heartbeat(true);
+        led_error(true);
         chThdSleepMilliseconds(500);
-        led_heartbeat(false);
+        led_error(false);
         chThdSleepMilliseconds(500);
     }
 }
