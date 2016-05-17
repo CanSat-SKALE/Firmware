@@ -2,10 +2,32 @@
 #include <hal.h>
 #include "log.h"
 #include "chprintf.h"
+#include <serial_lld.h>
 #include "blocking_uart_driver.h"
 #include "comm.h"
 
 #include "sensor_readout.h"
+
+BaseSequentialStream* chp = (BaseSequentialStream*) &SD2;
+
+SerialConfig uartCfg = {115200, 0, USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0};
+
+static PWMConfig pwmcfg = {
+  200000, /* 200Khz PWM clock frequency*/
+  20000, /* PWM period of 1024 ticks ~ 0.005 second */
+  NULL, /* No callback */
+   //channel 3 enabled 
+  {
+    {PWM_OUTPUT_DISABLED, NULL},
+    {PWM_OUTPUT_DISABLED, NULL},
+    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+    {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+  },
+0,
+0
+ };
+
+
 
 
 void panic_handler(const char *reason)
@@ -41,17 +63,41 @@ void panic_handler(const char *reason)
         }
     }
 }
+
+static THD_WORKING_AREA(waBuzzer, 256);
+static THD_FUNCTION(Buzzer, arg) {
+    
+    (void) arg;
+
+    chRegSetThreadName("Buzzer");
+
+    pwmStart(&PWMD3, &pwmcfg);
+    palSetPadMode(GPIOB, GPIOB_BUZZER_PWM, PAL_MODE_ALTERNATE(2));
+    palSetPadMode(GPIOB, GPIOB_IR_LED_PWM, PAL_MODE_ALTERNATE(2));
+
+    pwmEnableChannel(&PWMD3, 2, 100);
+    pwmEnableChannel(&PWMD3, 3, 100);
+
+    while(true)
+    {
+        chThdSleepMilliseconds(100);
+    }
+
+}
+
 static THD_WORKING_AREA(waHeartBeat, 256);
 static THD_FUNCTION(HeartBeat, arg) {
 
   (void)arg;
   chRegSetThreadName("HeartBeat");
-  
+
   while (true) {
     palTogglePad(GPIOB, GPIOB_LED_HEARTBEAT);     
     chThdSleepMilliseconds(100);
   }
 }
+
+
 
 int main(void)
 {
@@ -59,7 +105,7 @@ int main(void)
     chSysInit();
 
     sdStart(&SD1, NULL);
-    sdStart(&SD2, NULL);
+    sdStart(&SD2, &uartCfg);
     sdStart(&SD3, NULL);
     sdStart(&SD6, NULL);
 
@@ -80,10 +126,18 @@ int main(void)
     sensor_readout_start();
     comm_start();
 
-    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+    chThdCreateStatic(waHeartBeat, sizeof(waHeartBeat), NORMALPRIO, HeartBeat, NULL);
+    chThdCreateStatic(waBuzzer, sizeof(waBuzzer), NORMALPRIO, Buzzer, NULL);
+
+    // XBEE
+    //palSetPadMode(GPIOA, GPIOA_XBEE_TX, PAL_MODE_ALTERNATE(7));
+    //palSetPadMode(GPIOA, GPIOA_XBEE_RX, PAL_MODE_ALTERNATE(7));
+     
+    
 
     while (true) {
         led_error(true);
+        //chprintf(chp, "mami\n");
         chThdSleepMilliseconds(500);
         led_error(false);
         chThdSleepMilliseconds(500);
