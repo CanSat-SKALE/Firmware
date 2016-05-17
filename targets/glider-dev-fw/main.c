@@ -7,24 +7,24 @@
 #include "comm.h"
 
 #include "sensor_readout.h"
-
+#include "buzzer.h"
 BaseSequentialStream* chp = (BaseSequentialStream*) &SD2;
 
 SerialConfig uartCfg = {115200, 0, USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0};
 
-static PWMConfig pwmcfg = {
-  1000000,       /* 1Mhz PWM clock frequency*/
-  250,         /* PWM period of 250 ticks ~  */
-  NULL,         /* No callback */
-  {             /* channel 3 and 4 enabled */
-    {PWM_OUTPUT_DISABLED, NULL},
-    {PWM_OUTPUT_DISABLED, NULL},
-    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-    {PWM_OUTPUT_ACTIVE_HIGH, NULL}
-  },
-0,
-0
-};
+// static PWMConfig pwmcfg = {
+//   1000000,       /* 1Mhz PWM clock frequency*/
+//   250,         /* PWM period of 250 ticks ~  */
+//   NULL,         /* No callback */
+//   {              channel 3 and 4 enabled 
+//     {PWM_OUTPUT_DISABLED, NULL},
+//     {PWM_OUTPUT_DISABLED, NULL},
+//     {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+//     {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+//   },
+// 0,
+// 0
+// };
 
 
 
@@ -63,7 +63,7 @@ void panic_handler(const char *reason)
     }
 }
 
-static THD_WORKING_AREA(waBuzzer, 128);
+/*static THD_WORKING_AREA(waBuzzer, 128);
 static THD_FUNCTION(Buzzer, arg) {
     
     (void) arg;
@@ -78,9 +78,9 @@ static THD_FUNCTION(Buzzer, arg) {
         chThdSleepMilliseconds(100);
     }
 
-}
+}*/
 
-static THD_WORKING_AREA(waIRLED, 128);
+/*static THD_WORKING_AREA(waIRLED, 128);
 static THD_FUNCTION(IRLED, arg) {
     
     (void) arg;
@@ -95,7 +95,7 @@ static THD_FUNCTION(IRLED, arg) {
     }
 
 }
-
+*/
 
 
 static THD_WORKING_AREA(waHeartBeat, 256);
@@ -118,7 +118,7 @@ int main(void)
     chSysInit();
 
     sdStart(&SD1, NULL);
-    sdStart(&SD2, &uartCfg);
+    sdStart(&SD2, NULL);
     sdStart(&SD3, NULL);
     sdStart(&SD6, NULL);
 
@@ -138,24 +138,26 @@ int main(void)
 
     sensor_readout_start();
     comm_start();
-
-    pwmStart(&PWMD3, &pwmcfg);
+    buzzerStart();
+    //pwmStart(&PWMD3, &pwmcfg);
 
     palSetPadMode(GPIOB, GPIOB_BUZZER_PWM, PAL_MODE_ALTERNATE(2));
     palSetPadMode(GPIOB, GPIOB_IR_LED_PWM, PAL_MODE_ALTERNATE(2));
 
     chThdCreateStatic(waHeartBeat, sizeof(waHeartBeat), NORMALPRIO, HeartBeat, NULL);
-    chThdCreateStatic(waBuzzer, sizeof(waBuzzer), NORMALPRIO, Buzzer, NULL);
-    chThdCreateStatic(waIRLED, sizeof(waIRLED), NORMALPRIO, IRLED, NULL);
+    //chThdCreateStatic(waBuzzer, sizeof(waBuzzer), NORMALPRIO, Buzzer, NULL);
+    //chThdCreateStatic(waIRLED, sizeof(waIRLED), NORMALPRIO, IRLED, NULL);
 
 
      
     
 
     while (true) {
+        buzzerBeep(true);
         led_error(true);
         chThdSleepMilliseconds(500);
         led_error(false);
+        buzzerBeep(false);
         chThdSleepMilliseconds(500);
     }
 }
