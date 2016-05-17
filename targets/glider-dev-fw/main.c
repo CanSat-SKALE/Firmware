@@ -13,8 +13,8 @@ BaseSequentialStream* chp = (BaseSequentialStream*) &SD2;
 SerialConfig uartCfg = {115200, 0, USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0};
 
 static PWMConfig pwmcfg = {
-  100000,       /* 200Khz PWM clock frequency*/
-  2000,         /* PWM period of 2000 ticks ~ 500 Hz */
+  1000000,       /* 1Mhz PWM clock frequency*/
+  250,         /* PWM period of 250 ticks ~  */
   NULL,         /* No callback */
   {             /* channel 3 and 4 enabled */
     {PWM_OUTPUT_DISABLED, NULL},
@@ -71,7 +71,7 @@ static THD_FUNCTION(Buzzer, arg) {
     chRegSetThreadName("Buzzer");
 
 
-    pwmEnableChannel(&PWMD3, 3, 1000);
+    pwmEnableChannel(&PWMD3, 3, 150);
 
     while(true)
     {
@@ -87,7 +87,7 @@ static THD_FUNCTION(IRLED, arg) {
 
     chRegSetThreadName("IR Led");
 
-    pwmEnableChannel(&PWMD3, 2, 1000);
+    pwmEnableChannel(&PWMD3, 2, 125);
 
     while(true)
     {
@@ -140,6 +140,7 @@ int main(void)
     comm_start();
 
     pwmStart(&PWMD3, &pwmcfg);
+
     palSetPadMode(GPIOB, GPIOB_BUZZER_PWM, PAL_MODE_ALTERNATE(2));
     palSetPadMode(GPIOB, GPIOB_IR_LED_PWM, PAL_MODE_ALTERNATE(2));
 
