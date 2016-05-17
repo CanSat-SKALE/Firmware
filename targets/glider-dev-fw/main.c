@@ -13,11 +13,10 @@ BaseSequentialStream* chp = (BaseSequentialStream*) &SD2;
 SerialConfig uartCfg = {115200, 0, USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0};
 
 static PWMConfig pwmcfg = {
-  200000, /* 200Khz PWM clock frequency*/
-  20000, /* PWM period of 1024 ticks ~ 0.005 second */
-  NULL, /* No callback */
-   //channel 3 enabled 
-  {
+  100000,       /* 200Khz PWM clock frequency*/
+  2000,         /* PWM period of 2000 ticks ~ 500 Hz */
+  NULL,         /* No callback */
+  {             /* channel 3 and 4 enabled */
     {PWM_OUTPUT_DISABLED, NULL},
     {PWM_OUTPUT_DISABLED, NULL},
     {PWM_OUTPUT_ACTIVE_HIGH, NULL},
@@ -25,7 +24,7 @@ static PWMConfig pwmcfg = {
   },
 0,
 0
- };
+};
 
 
 
@@ -64,19 +63,15 @@ void panic_handler(const char *reason)
     }
 }
 
-static THD_WORKING_AREA(waBuzzer, 256);
+static THD_WORKING_AREA(waBuzzer, 128);
 static THD_FUNCTION(Buzzer, arg) {
     
     (void) arg;
 
     chRegSetThreadName("Buzzer");
 
-    pwmStart(&PWMD3, &pwmcfg);
-    palSetPadMode(GPIOB, GPIOB_BUZZER_PWM, PAL_MODE_ALTERNATE(2));
-    palSetPadMode(GPIOB, GPIOB_IR_LED_PWM, PAL_MODE_ALTERNATE(2));
 
-    pwmEnableChannel(&PWMD3, 2, 100);
-    pwmEnableChannel(&PWMD3, 3, 100);
+    pwmEnableChannel(&PWMD3, 3, 1000);
 
     while(true)
     {
@@ -84,6 +79,24 @@ static THD_FUNCTION(Buzzer, arg) {
     }
 
 }
+
+static THD_WORKING_AREA(waIRLED, 128);
+static THD_FUNCTION(IRLED, arg) {
+    
+    (void) arg;
+
+    chRegSetThreadName("IR Led");
+
+    pwmEnableChannel(&PWMD3, 2, 1000);
+
+    while(true)
+    {
+        chThdSleepMilliseconds(100);
+    }
+
+}
+
+
 
 static THD_WORKING_AREA(waHeartBeat, 256);
 static THD_FUNCTION(HeartBeat, arg) {
@@ -126,18 +139,20 @@ int main(void)
     sensor_readout_start();
     comm_start();
 
+    pwmStart(&PWMD3, &pwmcfg);
+    palSetPadMode(GPIOB, GPIOB_BUZZER_PWM, PAL_MODE_ALTERNATE(2));
+    palSetPadMode(GPIOB, GPIOB_IR_LED_PWM, PAL_MODE_ALTERNATE(2));
+
     chThdCreateStatic(waHeartBeat, sizeof(waHeartBeat), NORMALPRIO, HeartBeat, NULL);
     chThdCreateStatic(waBuzzer, sizeof(waBuzzer), NORMALPRIO, Buzzer, NULL);
+    chThdCreateStatic(waIRLED, sizeof(waIRLED), NORMALPRIO, IRLED, NULL);
 
-    // XBEE
-    //palSetPadMode(GPIOA, GPIOA_XBEE_TX, PAL_MODE_ALTERNATE(7));
-    //palSetPadMode(GPIOA, GPIOA_XBEE_RX, PAL_MODE_ALTERNATE(7));
+
      
     
 
     while (true) {
         led_error(true);
-        //chprintf(chp, "mami\n");
         chThdSleepMilliseconds(500);
         led_error(false);
         chThdSleepMilliseconds(500);
