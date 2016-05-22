@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <inttypes.h>
 #include "telemetry_protocol.h"
 
 #define TEAM_ID 8099
@@ -16,7 +17,7 @@ void telemetry_init(telemetry_state_t *t)
 void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_s *data, char *frame)
 {
     snprintf(frame, TELEMETRY_FRAME_BUFFER_SIZE,
-             "%d,%d,%d,%d,%.1f,%d,%.2f,%f,%f,%.1f,%d,%.1f,%d,%d\n",
+             "%d,%d,%"PRId32",%"PRId32",%.1f,%"PRId32",%.2f,%f,%f,%.1f,%d,%.1f,%"PRId32",%" PRId32 "\n",
              TEAM_ID,
              t->telemetry_frame_count,
              data->altitude,
