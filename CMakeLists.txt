@@ -12,6 +12,7 @@ file(GLOB_RECURSE src src/tests/*.cpp)
 add_executable(
     tests
     ${src}
+    src/telemetry_protocol.c
     )
 
 target_link_libraries(
