@@ -9,3 +9,4 @@ PROJCSRC += $(PROJROOT)/./src/sensor_readout.c
 PROJCSRC += $(PROJROOT)/./src/log.c
 PROJCSRC += $(PROJROOT)/./src/blocking_uart_driver.c
 PROJCSRC += $(PROJROOT)/./src/comm.c
+PROJCSRC += $(PROJROOT)/./src/telemetry_protocol.c
