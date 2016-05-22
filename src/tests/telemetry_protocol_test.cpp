@@ -92,3 +92,18 @@ TEST(TelemetryTest, shouldResendTelemetry)
     CHECK_FALSE(should_resend_last_telemetry_frame(&t)) // don't resend
 }
 
+
+TEST(TelemetryTest, rxBuffer)
+{
+    telemetry_rx_buffer_t b;
+    telemetry_rx_buffer_init(&b);
+    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'a'));
+    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'b'));
+    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'c'));
+    char *buf = telemetry_rx_buffer_input_char(&b, '\n');
+    STRCMP_EQUAL("abc\n", buf);
+    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, '1'));
+    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, '2'));
+    buf = telemetry_rx_buffer_input_char(&b, '\n');
+    STRCMP_EQUAL("12\n", buf);
+}

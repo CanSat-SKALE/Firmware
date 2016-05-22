@@ -33,6 +33,11 @@ typedef struct {
     int last_telemetry_ack;
 } telemetry_state_t;
 
+typedef struct {
+    char buffer[TELEMETRY_FRAME_BUFFER_SIZE];
+    int idx;
+} telemetry_rx_buffer_t;
+
 struct telemetry_data_s {
     int32_t altitude; // [m] from barometer
     int32_t pressure; // [Pa]
@@ -51,6 +56,8 @@ void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_
 void telemetry_parse_frame(telemetry_state_t *t, const char *frame);
 bool should_resend_last_telemetry_frame(telemetry_state_t *t);
 
+void telemetry_rx_buffer_init(telemetry_rx_buffer_t *b);
+char *telemetry_rx_buffer_input_char(telemetry_rx_buffer_t *b, char c);
 
 #ifdef __cplusplus
 }

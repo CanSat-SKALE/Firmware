@@ -57,3 +57,20 @@ bool should_resend_last_telemetry_frame(telemetry_state_t *t)
         return false;
     }
 }
+
+
+void telemetry_rx_buffer_init(telemetry_rx_buffer_t *b)
+{
+    b->idx = 0;
+}
+
+char *telemetry_rx_buffer_input_char(telemetry_rx_buffer_t *b, char c)
+{
+    b->buffer[b->idx++] = c;
+    if (c == '\n') {
+        b->buffer[b->idx] = '\0';
+        b->idx = 0;
+        return b->buffer;
+    }
+    return NULL;
+}
