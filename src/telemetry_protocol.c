@@ -30,8 +30,8 @@ void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_
              data->gps_altitude,
              data->gps_satellite_nbr,
              data->gps_speed,
-             data->command_time,
-             data->command_count);
+             (uint32_t)0,
+             (uint32_t)0);
     t->telemetry_frame_count++;
 }
 

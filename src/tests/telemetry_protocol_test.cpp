@@ -13,8 +13,6 @@ const struct telemetry_data_s telem_data = {
     .gps_altitude = 314,
     .gps_satellite_nbr = 4,
     .gps_speed = 9,
-    .command_time = 42,
-    .command_count = 1,
 };
 
 TEST_GROUP(TelemetryTest)
@@ -48,7 +46,7 @@ TEST(TelemetryTest, telemetryData)
     telemetry_state_t t;
     telemetry_init(&t);
     telemetry_assemble_frame(&t, &telem_data, framebuffer);
-    STRCMP_EQUAL("8099,1,300,97772,10.0,15,1.18,46.532162,6.591388,314.0,4,9.0,42,1\n", framebuffer);
+    STRCMP_EQUAL("8099,1,300,97772,10.0,15,1.18,46.532162,6.591388,314.0,4,9.0,0,0\n", framebuffer);
 }
 
 TEST(TelemetryTest, parseTelemAck)

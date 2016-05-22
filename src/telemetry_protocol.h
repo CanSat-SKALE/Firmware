@@ -44,8 +44,6 @@ struct telemetry_data_s {
     float gps_altitude; // [m]
     int gps_satellite_nbr;
     float gps_speed; // [m/s]
-    int32_t command_time; // [s]
-    int32_t command_count;
 };
 
 void telemetry_init(telemetry_state_t *t);
