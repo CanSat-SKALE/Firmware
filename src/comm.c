@@ -2,6 +2,8 @@
 #include <hal.h>
 #include "thread_prio.h"
 #include <string.h>
+#include "air_data.h"
+#include "sensor_readout.h"
 #include "telemetry_protocol.h"
 
 #include "comm.h"
@@ -58,12 +60,15 @@ static THD_FUNCTION(periodic_telemetry, arg)
     while (true) {
         chThdSleepMilliseconds(1000);
 
-        data.altitude = 0;
-        data.pressure = 0;
-        data.speed = 0;
-        data.temperature = 0;
-        data.bus_voltage = 0;
-        data.gps_latitude = 0;
+        float pressure, temperature;
+        float dynamic_pressure = 0; // TODO read differential pressure sensor
+        sensor_get_ms5611(&pressure, &temperature);
+        data.altitude = air_data_compute_altitude(pressure);
+        data.pressure = pressure;
+        data.speed = air_data_compute_airspeed(dynamic_pressure);
+        data.temperature = temperature;
+        data.bus_voltage = 0; // TODO read battery voltage
+        data.gps_latitude = 0; // TODO GPS
         data.gps_longitude = 0;
         data.gps_altitude = 0;
         data.gps_satellite_nbr = 0;

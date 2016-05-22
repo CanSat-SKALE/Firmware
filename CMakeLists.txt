@@ -13,6 +13,7 @@ add_executable(
     tests
     ${src}
     src/telemetry_protocol.c
+    src/air_data.c
     )
 
 target_link_libraries(
