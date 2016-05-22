@@ -13,6 +13,38 @@ static float ms5611_temperature;
 static float h3lis331dl_acc[3];
 
 
+void sensor_get_mpu6050(float *rate, float *acc, float *temp)
+{
+    chSysLock();
+    rate[0] = mpu6050_rate[0];
+    rate[1] = mpu6050_rate[1];
+    rate[2] = mpu6050_rate[2];
+    acc[0] = mpu6050_acc[0];
+    acc[1] = mpu6050_acc[1];
+    acc[2] = mpu6050_acc[2];
+    *temp = mpu6050_temp;
+    chSysUnlock();
+}
+
+void sensor_get_ms5611(float *pressure, float *temp)
+{
+    chSysLock();
+    *pressure = ms5611_pressure;
+    *temp = ms5611_temperature;
+    chSysUnlock();
+}
+
+void sensor_get_h3lis331dl(float *acc)
+{
+    chSysLock();
+    acc[0] = h3lis331dl_acc[0];
+    acc[1] = h3lis331dl_acc[1];
+    acc[2] = h3lis331dl_acc[2];
+    chSysUnlock();
+}
+
+
+
 static THD_WORKING_AREA(mpu6050_readout_wa, 256);
 static THD_FUNCTION(mpu6050_readout, arg)
 {
