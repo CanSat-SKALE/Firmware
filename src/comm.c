@@ -19,5 +19,5 @@ static THD_FUNCTION(comm, arg)
 
 void comm_start(void)
 {
-    chThdCreateStatic(comm_wa, sizeof(comm_wa), THD_PRIO_COMM, comm, &SD2);
+    chThdCreateStatic(comm_wa, sizeof(comm_wa), THD_PRIO_COMM, comm, &SD3);
 }

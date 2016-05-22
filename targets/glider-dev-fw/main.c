@@ -8,33 +8,56 @@
 
 #include "sensor_readout.h"
 #include "buzzer.h"
-BaseSequentialStream* chp = (BaseSequentialStream*) &SD2;
 
-SerialConfig uartCfg = {115200, 0, USART_CR2_STOP1_BITS | USART_CR2_LINEN, 0};
+#define ADC_GRP1_NUM_CHANNELS   1
+#define ADC_GRP1_BUF_DEPTH      8
+//static adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 
-// static PWMConfig pwmcfg = {
-//   1000000,       /* 1Mhz PWM clock frequency*/
-//   250,         /* PWM period of 250 ticks ~  */
-//   NULL,         /* No callback */
-//   {              channel 3 and 4 enabled 
-//     {PWM_OUTPUT_DISABLED, NULL},
-//     {PWM_OUTPUT_DISABLED, NULL},
-//     {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-//     {PWM_OUTPUT_ACTIVE_HIGH, NULL}
-//   },
-// 0,
-// 0
+size_t nx = 0, ny = 0;
+// static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+
+//   (void)adcp;
+//   (void)n;
+
+//   static BlockingUARTDriver blocking_uart_stream;
+
+//    blocking_uart_init(&blocking_uart_stream,
+//                        USART6, SERIAL_DEFAULT_BITRATE);
+
+//   //BaseSequentialStream* uart = (BaseSequentialStream*)&blocking_uart_stream;
+  
+//   //chprintf(uart, "ADC[0] = %d, ADC[1] = %d \n", buffer[0], buffer[1]);
+
+//   //chprintf(&samples1);
+// }
+// static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
+
+//   (void)adcp;
+//   (void)err;
+// }
+
+
+// static const ADCConversionGroup adcgrpcfg1 = {
+//   TRUE,   // continuous conversion
+//   ADC_GRP1_NUM_CHANNELS,
+//   adccallback,
+//   adcerrorcallback,
+//   0,                        /* CR1 */
+//   ADC_CR2_SWSTART,          /* CR2 */
+//   ADC_SMPR1_SMP_AN10(ADC_SAMPLE_3),   // 3 cycles sampling time
+//   0,                        /* SMPR2 */
+//   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
+//   0,                        /* SQR2 */
+//   ADC_SQR3_SQ1_N(ADC_CHANNEL_IN10)
 // };
-
 
 
 
 void panic_handler(const char *reason)
 {
-    (void)reason;
-    led_heartbeat(true);
-    led_error(true);
-    led_sdcard(true);
+    // led_heartbeat(true);
+    // led_error(true);
+    // led_sdcard(true);
 
     static BlockingUARTDriver blocking_uart_stream;
 
@@ -56,46 +79,16 @@ void panic_handler(const char *reason)
             }
         }
 
-        unsigned int i = 100000000;
+        /* Toggle ERROR LED in case of panic */
+        palTogglePad(GPIOB, GPIOB_LED_ERR);
+
+        unsigned int i = 10000000;
         while(i--) {
             __asm__ volatile ("nop");
         }
     }
 }
 
-/*static THD_WORKING_AREA(waBuzzer, 128);
-static THD_FUNCTION(Buzzer, arg) {
-    
-    (void) arg;
-
-    chRegSetThreadName("Buzzer");
-
-
-    pwmEnableChannel(&PWMD3, 3, 150);
-
-    while(true)
-    {
-        chThdSleepMilliseconds(100);
-    }
-
-}*/
-
-/*static THD_WORKING_AREA(waIRLED, 128);
-static THD_FUNCTION(IRLED, arg) {
-    
-    (void) arg;
-
-    chRegSetThreadName("IR Led");
-
-    pwmEnableChannel(&PWMD3, 2, 125);
-
-    while(true)
-    {
-        chThdSleepMilliseconds(100);
-    }
-
-}
-*/
 
 
 static THD_WORKING_AREA(waHeartBeat, 256);
@@ -112,13 +105,29 @@ static THD_FUNCTION(HeartBeat, arg) {
 
 
 
+static void rxchar(UARTDriver *uartp, uint16_t c) {
+
+  (void)uartp;
+  (void)c;
+
+   // Flashing the LED each time a character is received.
+  palTogglePad(GPIOD, GPIOB_LED_SDCARD);
+}
+
+
+ /* UART driver configuration structure. */
+
+static UARTConfig uart_cfg_1 = {NULL, NULL, NULL, rxchar, NULL, 115200, 0,
+                                0, 0};
+
+
+
 int main(void)
 {
     halInit();
     chSysInit();
 
     sdStart(&SD1, NULL);
-    sdStart(&SD2, NULL);
     sdStart(&SD3, NULL);
     sdStart(&SD6, NULL);
 
@@ -138,8 +147,12 @@ int main(void)
 
     sensor_readout_start();
     comm_start();
-    buzzerStart();
+    //buzzerStart();
     //pwmStart(&PWMD3, &pwmcfg);
+
+    //adcStart(&ADCD1, NULL);
+    //adcSTM32EnableTSVREFE();
+    //adcStartConversion(&ADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
 
     palSetPadMode(GPIOB, GPIOB_BUZZER_PWM, PAL_MODE_ALTERNATE(2));
     palSetPadMode(GPIOB, GPIOB_IR_LED_PWM, PAL_MODE_ALTERNATE(2));
@@ -148,15 +161,15 @@ int main(void)
     //chThdCreateStatic(waBuzzer, sizeof(waBuzzer), NORMALPRIO, Buzzer, NULL);
     //chThdCreateStatic(waIRLED, sizeof(waIRLED), NORMALPRIO, IRLED, NULL);
 
-
+    uartStart(&UARTD2, &uart_cfg_1);
+    palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+    palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
      
     
 
     while (true) {
         buzzerBeep(true);
-        led_error(true);
         chThdSleepMilliseconds(500);
-        led_error(false);
         buzzerBeep(false);
         chThdSleepMilliseconds(500);
     }
