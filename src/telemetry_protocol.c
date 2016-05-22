@@ -17,8 +17,9 @@ void telemetry_init(telemetry_state_t *t)
 void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_s *data, char *frame)
 {
     snprintf(frame, TELEMETRY_FRAME_BUFFER_SIZE,
-             "%d,%d,%"PRId32",%"PRId32",%.1f,%"PRId32",%.2f,%f,%f,%.1f,%d,%.1f,%"PRId32",%" PRId32 "\n",
+             "%d,%d,%d,%"PRId32",%"PRId32",%.1f,%"PRId32",%.2f,%f,%f,%.1f,%d,%.1f,%"PRId32",%" PRId32 "\n",
              TEAM_ID,
+             t->telemetry_frame_count,
              t->telemetry_frame_count,
              data->altitude,
              data->pressure,
@@ -38,7 +39,7 @@ void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_
 
 void telemetry_parse_frame(telemetry_state_t *t, const char *frame)
 {
-    if (strncmp("ACKS", frame, 4) == 0) {
+    if (strncmp("ACK-SENSOR", frame, 4) == 0) {
         const char *arg1 = strchr(frame, ',');
         if (arg1 != NULL) {
             long int ack_nbr = strtol(++arg1, NULL, 10);

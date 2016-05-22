@@ -13,7 +13,7 @@ static mutex_t telemetry_lock;
 static telemetry_state_t telemetry;
 static char telemetry_frame_buffer[TELEMETRY_FRAME_BUFFER_SIZE];
 
-static THD_WORKING_AREA(comm_tx_wa, 512);
+static THD_WORKING_AREA(comm_tx_wa, 1024);
 static THD_FUNCTION(comm_tx, arg)
 {
     BaseSequentialStream *comm_port = (BaseSequentialStream*)arg;
@@ -30,7 +30,7 @@ static THD_FUNCTION(comm_tx, arg)
     }
 }
 
-static THD_WORKING_AREA(comm_rx_wa, 512);
+static THD_WORKING_AREA(comm_rx_wa, 1024);
 static THD_FUNCTION(comm_rx, arg)
 {
     BaseSequentialStream *comm_port = (BaseSequentialStream*)arg;
@@ -50,7 +50,7 @@ static THD_FUNCTION(comm_rx, arg)
     }
 }
 
-static THD_WORKING_AREA(periodic_telemetry_wa, 512);
+static THD_WORKING_AREA(periodic_telemetry_wa, 1024);
 static THD_FUNCTION(periodic_telemetry, arg)
 {
     (void)arg;

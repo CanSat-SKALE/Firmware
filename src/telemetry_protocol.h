@@ -49,6 +49,7 @@ struct telemetry_data_s {
     float gps_altitude; // [m]
     int gps_satellite_nbr;
     float gps_speed; // [m/s]
+    
 };
 
 void telemetry_init(telemetry_state_t *t);
