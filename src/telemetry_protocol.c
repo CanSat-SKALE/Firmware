@@ -17,8 +17,9 @@ void telemetry_init(telemetry_state_t *t)
 void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_s *data, char *frame)
 {
     snprintf(frame, TELEMETRY_FRAME_BUFFER_SIZE,
-             "%d,%d,%"PRId32",%"PRId32",%.1f,%"PRId32",%.2f,%f,%f,%.1f,%d,%.1f,%"PRId32",%" PRId32 "\n",
+             "%d,%d,%d,%"PRId32",%"PRId32",%.1f,%"PRId32",%.2f,%f,%f,%.1f,%d,%.1f,%"PRId32",%" PRId32 "\n",
              TEAM_ID,
+             t->telemetry_frame_count, // TODO this should be mission time
              t->telemetry_frame_count,
              data->altitude,
              data->pressure,

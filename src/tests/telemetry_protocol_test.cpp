@@ -46,7 +46,7 @@ TEST(TelemetryTest, telemetryData)
     telemetry_state_t t;
     telemetry_init(&t);
     telemetry_assemble_frame(&t, &telem_data, framebuffer);
-    STRCMP_EQUAL("8099,1,300,97772,10.0,15,1.18,46.532162,6.591388,314.0,4,9.0,0,0\n", framebuffer);
+    STRCMP_EQUAL("8099,1,1,300,97772,10.0,15,1.18,46.532162,6.591388,314.0,4,9.0,0,0\n", framebuffer);
 }
 
 TEST(TelemetryTest, parseTelemAck)
