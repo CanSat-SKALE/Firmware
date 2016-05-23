@@ -5,7 +5,7 @@
 protocol:
 
 SENSOR - <TEAM ID>, .. \n
-ACK    - ACKS, PACKET COUNT \n
+ACK    - ACK-SENSOR, PACKET COUNT \n
 
 IMG    - IMG, FRAME NUMBER, DATA (HEX/BASE64) \n
 ACK    - ACKI, FRAME NUMBER \n

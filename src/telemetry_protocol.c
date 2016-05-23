@@ -38,7 +38,7 @@ void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_
 
 void telemetry_parse_frame(telemetry_state_t *t, const char *frame)
 {
-    if (strncmp("ACKS", frame, 4) == 0) {
+    if (strncmp("ACK-SENSOR", frame, 4) == 0) {
         const char *arg1 = strchr(frame, ',');
         if (arg1 != NULL) {
             long int ack_nbr = strtol(++arg1, NULL, 10);
