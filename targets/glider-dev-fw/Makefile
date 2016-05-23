@@ -229,7 +229,11 @@ include $(PROJROOT)/rules.mk
 PRE_MAKE_ALL_RULE_HOOK:
 	cd $(PROJROOT) && ./git_revision.sh
 
-POST_MAKE_ALL_RULE_HOOK:
+POST_MAKE_ALL_RULE_HOOK: tests
+
+.PHONY: tests
+tests:
+	cd $(PROJROOT) && mkdir -p build && cd build && cmake .. && rm -f tests && make check
 
 # Generates a ctags file containing the correct definition for the build
 .PHONY: ctags
