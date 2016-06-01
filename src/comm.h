@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void comm_start(void);
+void comm_start(BaseSequentialStream *port);
 
 #ifdef __cplusplus
 }

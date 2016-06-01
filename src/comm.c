@@ -81,11 +81,11 @@ static THD_FUNCTION(periodic_telemetry, arg)
 }
 
 
-void comm_start(void)
+void comm_start(BaseSequentialStream *port)
 {
     chMtxObjectInit(&telemetry_lock);
     telemetry_init(&telemetry);
-    chThdCreateStatic(comm_tx_wa, sizeof(comm_tx_wa), THD_PRIO_COMM, comm_tx, &SD2);
-    chThdCreateStatic(comm_rx_wa, sizeof(comm_rx_wa), THD_PRIO_COMM, comm_rx, &SD2);
+    chThdCreateStatic(comm_tx_wa, sizeof(comm_tx_wa), THD_PRIO_COMM, comm_tx, port);
+    chThdCreateStatic(comm_rx_wa, sizeof(comm_rx_wa), THD_PRIO_COMM, comm_rx, port);
     chThdCreateStatic(periodic_telemetry_wa, sizeof(periodic_telemetry_wa), THD_PRIO_COMM, periodic_telemetry, NULL);
 }

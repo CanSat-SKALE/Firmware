@@ -68,7 +68,7 @@ int main(void)
     pwr_5V(true);
 
     sensor_readout_start();
-    comm_start();
+    comm_start((BaseSequentialStream*)&SD2);
 
     while (true) {
         led_heartbeat(true);
