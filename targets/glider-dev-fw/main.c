@@ -67,7 +67,10 @@ int main(void)
     pwr_sdcard(true);
     pwr_5V(true);
 
-    sensor_readout_start();
+    sensor_readout_start_mpu6050();
+    sensor_readout_start_ms5611();
+    sensor_readout_start_h3lis331dl();
+
     comm_start((BaseSequentialStream*)&SD2);
 
     while (true) {

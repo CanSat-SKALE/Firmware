@@ -178,12 +178,20 @@ static THD_FUNCTION(h3lis331dl_readout, arg)
     }
 }
 
-void sensor_readout_start(void)
+void sensor_readout_start_mpu6050(void)
 {
     chThdCreateStatic(mpu6050_readout_wa, sizeof(mpu6050_readout_wa),
                       THD_PRIO_SENSOR_MPU6050_READOUT, mpu6050_readout, NULL);
+}
+
+void sensor_readout_start_ms5611(void)
+{
     chThdCreateStatic(ms5611_readout_wa, sizeof(ms5611_readout_wa),
                       THD_PRIO_SENSOR_MS5611_READOUT, ms5611_readout, NULL);
+}
+
+void sensor_readout_start_h3lis331dl(void)
+{
     chThdCreateStatic(h3lis331dl_readout_wa, sizeof(h3lis331dl_readout_wa),
                       THD_PRIO_SENSOR_H3LIS331DL_READOUT, h3lis331dl_readout, NULL);
 }
