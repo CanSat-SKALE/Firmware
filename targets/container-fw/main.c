@@ -3,6 +3,7 @@
 #include "log.h"
 #include "chprintf.h"
 #include "blocking_uart_driver.h"
+#include "sensor_readout.h"
 
 
 void panic_handler(const char *reason)
@@ -58,7 +59,15 @@ int main(void)
     };
     i2cStart(&I2CD1, &i2c_cfg);
 
+    chThdSleepMilliseconds(1000);
+
+    sensor_readout_start_ms5611();
+
     while (true) {
+        float pressure, temp;
+        sensor_get_ms5611(&pressure, &temp);
+        log_info("pressure: %f\n", pressure);
+
         led_heartbeat(true);
         chThdSleepMilliseconds(500);
         led_heartbeat(false);
