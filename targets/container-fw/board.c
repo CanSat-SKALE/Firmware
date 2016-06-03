@@ -70,9 +70,9 @@ void led_error(bool en)
 void pwr_sensors(bool en)
 {
     if (en) {
-        palSetPad(GPIOB, GPIOB_SENSOR_SHDN);
-    } else {
         palClearPad(GPIOB, GPIOB_SENSOR_SHDN);
+    } else {
+        palSetPad(GPIOB, GPIOB_SENSOR_SHDN);
     }
 }
 
