@@ -1,5 +1,6 @@
 #include "telemetry_protocol.h"
 #include "CppUTest/TestHarness.h"
+#include <string.h>
 
 
 const struct telemetry_data_s telem_data = {
@@ -97,13 +98,13 @@ TEST(TelemetryTest, rxBuffer)
 {
     telemetry_rx_buffer_t b;
     telemetry_rx_buffer_init(&b);
-    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'a'));
-    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'b'));
-    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'c'));
+    POINTERS_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'a'));
+    POINTERS_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'b'));
+    POINTERS_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, 'c'));
     char *buf = telemetry_rx_buffer_input_char(&b, '\n');
     STRCMP_EQUAL("abc\n", buf);
-    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, '1'));
-    CHECK_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, '2'));
+    POINTERS_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, '1'));
+    POINTERS_EQUAL(NULL, telemetry_rx_buffer_input_char(&b, '2'));
     buf = telemetry_rx_buffer_input_char(&b, '\n');
     STRCMP_EQUAL("12\n", buf);
 }
