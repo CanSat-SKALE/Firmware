@@ -55,6 +55,11 @@ int main(void)
 
     log_info("=== boot ===");
 
+    pwr_sensors(true);
+    pwr_gps(true);
+    pwr_sdcard(true);
+    pwr_5V(true);
+
     static const I2CConfig i2c_cfg = {
         .op_mode = OPMODE_I2C,
         .clock_speed = 400000,
@@ -63,9 +68,7 @@ int main(void)
     i2cStart(&I2CD1, &i2c_cfg);
 
 
-    pwr_gps(true);
-    pwr_sdcard(true);
-    pwr_5V(true);
+    chThdSleepMilliseconds(1000);
 
     sensor_readout_start_mpu6050();
     sensor_readout_start_ms5611();
