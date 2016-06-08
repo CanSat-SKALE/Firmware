@@ -5,6 +5,7 @@
 #include "air_data.h"
 #include "sensor_readout.h"
 #include "telemetry_protocol.h"
+#include "log.h"
 
 #include "comm.h"
 
@@ -18,12 +19,16 @@ static THD_FUNCTION(comm_tx, arg)
 {
     BaseSequentialStream *comm_port = (BaseSequentialStream*)arg;
     chRegSetThreadName("comm_tx");
+
+    log_info("tx thrad started");
+
     while (true) {
         chMtxLock(&telemetry_lock);
         if (should_resend_last_telemetry_frame(&telemetry)) {
             chSequentialStreamWrite(comm_port,
                                     (const uint8_t *)telemetry_frame_buffer,
                                     strlen(telemetry_frame_buffer));
+            log_info("sending telemetry frame: %s", telemetry_frame_buffer);
         }
         chMtxUnlock(&telemetry_lock);
         chThdSleepMilliseconds(50);
@@ -36,6 +41,8 @@ static THD_FUNCTION(comm_rx, arg)
     BaseSequentialStream *comm_port = (BaseSequentialStream*)arg;
     chRegSetThreadName("comm_rx");
 
+    log_info("rx thrad started");
+
     static telemetry_rx_buffer_t b;
     telemetry_rx_buffer_init(&b);
     while (true) {
@@ -44,6 +51,7 @@ static THD_FUNCTION(comm_rx, arg)
         chMtxLock(&telemetry_lock);
         char *buf = telemetry_rx_buffer_input_char(&b, c);
         if (buf != NULL) {
+            log_info("rx frame: %s", buf);
             telemetry_parse_frame(&telemetry, buf);
         }
         chMtxUnlock(&telemetry_lock);
@@ -55,6 +63,8 @@ static THD_FUNCTION(periodic_telemetry, arg)
 {
     (void)arg;
     chRegSetThreadName("periodic_telemetry");
+
+    log_info("telemetry thrad started");
 
     static struct telemetry_data_s data;
     while (true) {

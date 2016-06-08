@@ -133,7 +133,7 @@ static THD_FUNCTION(ms5611_readout, arg)
         }
         press = ms5611_calc_press(&barometer, raw_p, raw_t, &temp);
 
-        log_info("MS5611: pressure: %d, temperature: %f", press, (float)temp/100);
+        // log_info("MS5611: pressure: %d, temperature: %f", press, (float)temp/100);
 
         chSysLock();
         ms5611_pressure = press;
