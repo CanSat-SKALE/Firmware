@@ -100,8 +100,8 @@
 
 // GPIO A
 
-#define VAL_GPIOA_MODER     ( PIN_MODE_ALTERNATE( GPIOA_XBEE_CTS        )       \
-                            | PIN_MODE_ALTERNATE( GPIOA_XBEE_RTS        )       \
+#define VAL_GPIOA_MODER     ( PIN_MODE_INPUT( GPIOA_XBEE_CTS        )       \
+                            | PIN_MODE_INPUT( GPIOA_XBEE_RTS        )       \
                             | PIN_MODE_ALTERNATE( GPIOA_XBEE_TX         )       \
                             | PIN_MODE_ALTERNATE( GPIOA_XBEE_RX         )       \
                             | PIN_MODE_INPUT(     GPIOA_NC_4            )       \
