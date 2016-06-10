@@ -109,8 +109,11 @@ static THD_FUNCTION(comm_relay_force_deploy, arg)
         if (telemetry.force_deploy > last_deploy) {
             last_deploy = telemetry.force_deploy;
 
-            // TODO send force deploy over IR
             log_info("sending force deploy to container");
+            // send force deploy over IR
+            IR_pwm(true);
+            chThdSleepMilliseconds(2000);
+            IR_pwm(false);
         }
         chMtxUnlock(&telemetry_lock);
         chThdSleepMilliseconds(100);

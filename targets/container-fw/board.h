@@ -544,6 +544,8 @@ void heat_resistor_4(bool en);
 
 void deploy(void);
 
+#define IR_pwm(en) {} // to make comm compile
+
 #ifdef __cplusplus
 }
 #endif
