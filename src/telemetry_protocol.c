@@ -37,8 +37,10 @@ void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_
 }
 
 
-void telemetry_parse_frame(telemetry_state_t *t, const char *frame)
+void telemetry_parse_frame(telemetry_state_t *t, const char *frame,
+                           char *response)
 {
+    response[0] = '\0'; // by default don't send response
     if (strncmp("ACK-SENSOR", frame, 4) == 0) {
         const char *arg1 = strchr(frame, ',');
         if (arg1 != NULL) {

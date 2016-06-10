@@ -43,6 +43,7 @@ static THD_FUNCTION(comm_rx, arg)
 
     log_info("rx thrad started");
 
+    static char resp_buf[TELEMETRY_FRAME_BUFFER_SIZE];
     static telemetry_rx_buffer_t b;
     telemetry_rx_buffer_init(&b);
     while (true) {
@@ -52,7 +53,7 @@ static THD_FUNCTION(comm_rx, arg)
         char *buf = telemetry_rx_buffer_input_char(&b, c);
         if (buf != NULL) {
             log_info("rx frame: %s", buf);
-            telemetry_parse_frame(&telemetry, buf);
+            telemetry_parse_frame(&telemetry, buf, resp_buf);
         }
         chMtxUnlock(&telemetry_lock);
     }

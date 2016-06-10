@@ -52,12 +52,13 @@ TEST(TelemetryTest, telemetryData)
 
 TEST(TelemetryTest, parseTelemAck)
 {
+    char parse_resp_buffer[TELEMETRY_FRAME_BUFFER_SIZE];
     telemetry_state_t t;
     telemetry_init(&t);
     CHECK_EQUAL(0, t.last_telemetry_ack);
 
     const char frame[] = "ACK-SENSOR, 3\n";
-    telemetry_parse_frame(&t, frame);
+    telemetry_parse_frame(&t, frame, parse_resp_buffer);
     CHECK_EQUAL(3, t.last_telemetry_ack);
 }
 
@@ -65,19 +66,21 @@ TEST(TelemetryTest, parseInvalidAckIgnored)
 {
     telemetry_state_t t;
     telemetry_init(&t);
+    char parse_resp_buffer[TELEMETRY_FRAME_BUFFER_SIZE];
     t.last_telemetry_ack = 5;
 
     const char frame1[] = "ACK, 3\n";
-    telemetry_parse_frame(&t, frame1);
+    telemetry_parse_frame(&t, frame1, parse_resp_buffer);
     CHECK_EQUAL(5, t.last_telemetry_ack);
     const char frame2[] = "ACK-SENSOR, ??\n";
-    telemetry_parse_frame(&t, frame2);
+    telemetry_parse_frame(&t, frame2, parse_resp_buffer);
     CHECK_EQUAL(5, t.last_telemetry_ack);
 }
 
 TEST(TelemetryTest, shouldResendTelemetry)
 {
     char framebuffer[TELEMETRY_FRAME_BUFFER_SIZE];
+    char parse_resp_buffer[TELEMETRY_FRAME_BUFFER_SIZE];
     telemetry_state_t t;
     telemetry_init(&t);
     // no frame sent, cannot resend
@@ -89,7 +92,7 @@ TEST(TelemetryTest, shouldResendTelemetry)
     CHECK_TRUE(should_resend_last_telemetry_frame(&t))
 
     const char frame1[] = "ACK-SENSOR, 1\n";
-    telemetry_parse_frame(&t, frame1);  // got ack
+    telemetry_parse_frame(&t, frame1, parse_resp_buffer);  // got ack
     CHECK_FALSE(should_resend_last_telemetry_frame(&t)) // don't resend
 }
 

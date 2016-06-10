@@ -53,7 +53,8 @@ struct telemetry_data_s {
 
 void telemetry_init(telemetry_state_t *t);
 void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_s *data, char *frame);
-void telemetry_parse_frame(telemetry_state_t *t, const char *frame);
+void telemetry_parse_frame(telemetry_state_t *t, const char *frame,
+                           char *response);
 bool should_resend_last_telemetry_frame(telemetry_state_t *t);
 
 void telemetry_rx_buffer_init(telemetry_rx_buffer_t *b);
