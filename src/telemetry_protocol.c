@@ -12,6 +12,7 @@ void telemetry_init(telemetry_state_t *t)
 {
     t->telemetry_frame_count = 1;
     t->last_telemetry_ack = 0;
+    t->force_deploy = 0;
 }
 
 void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_s *data, char *frame)
@@ -36,17 +37,33 @@ void telemetry_assemble_frame(telemetry_state_t *t, const struct telemetry_data_
     t->telemetry_frame_count++;
 }
 
-
 void telemetry_parse_frame(telemetry_state_t *t, const char *frame,
                            char *response)
 {
     response[0] = '\0'; // by default don't send response
-    if (strncmp("ACK-SENSOR", frame, 4) == 0) {
+    if (strncmp("ACK-SENSOR", frame, strlen("ACK-SENSOR")) == 0) {
         const char *arg1 = strchr(frame, ',');
         if (arg1 != NULL) {
             long int ack_nbr = strtol(++arg1, NULL, 10);
             if (ack_nbr != 0) {
                 t->last_telemetry_ack = ack_nbr;
+            }
+        }
+    }
+    if (strncmp("COMMAND", frame, strlen("COMMAND")) == 0) {
+        const char *arg1 = strchr(frame, ',');
+        if (arg1 != NULL) {
+            long int cmd_seq_nbr = strtol(++arg1, NULL, 10);
+            if (cmd_seq_nbr != 0) {
+                const char *arg2 = strchr(arg1, ',');
+                arg2++;
+                if (arg2 != NULL) {
+                    if (strncmp("FORCE-DEPLOY", arg2, strlen("FORCE-DEPLOY"))) {
+                        t->force_deploy = cmd_seq_nbr;
+                        snprintf(response, TELEMETRY_FRAME_BUFFER_SIZE,
+                                 "ACK-COMMAND, %ld\n", cmd_seq_nbr);
+                    }
+                }
             }
         }
     }

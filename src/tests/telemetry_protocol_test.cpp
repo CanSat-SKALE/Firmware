@@ -111,3 +111,18 @@ TEST(TelemetryTest, rxBuffer)
     buf = telemetry_rx_buffer_input_char(&b, '\n');
     STRCMP_EQUAL("12\n", buf);
 }
+
+
+TEST(TelemetryTest, parseForceDeploy)
+{
+    char parse_resp_buffer[TELEMETRY_FRAME_BUFFER_SIZE];
+    telemetry_state_t t;
+    telemetry_init(&t);
+    CHECK_EQUAL(0, t.force_deploy);
+
+    const char frame[] = "COMMAND, 3, FORCE-DEPLOY\n";
+    telemetry_parse_frame(&t, frame, parse_resp_buffer);
+    CHECK_EQUAL(3, t.force_deploy);
+
+    STRCMP_EQUAL("ACK-COMMAND, 3\n", parse_resp_buffer);
+}

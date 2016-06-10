@@ -31,6 +31,7 @@ extern "C" {
 typedef struct {
     int telemetry_frame_count;
     int last_telemetry_ack;
+    int force_deploy;
 } telemetry_state_t;
 
 typedef struct {
