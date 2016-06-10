@@ -541,6 +541,7 @@ void pwr_sdcard(bool en);
 void pwr_gps(bool en);
 void pwr_5V(bool en);
 
+void IR_pwm(bool en);
 
 #ifdef __cplusplus
 }

@@ -106,8 +106,35 @@ void pwr_5V(bool en)
     }
 }
 
+#define IR_PWM_CH 3
+#define IR_PWM_FREQ 1000000
+#define IR_PWM_PERIOD 250
+void IR_pwm(bool en)
+{
+    if (en) {
+        pwmEnableChannel(&PWMD3, IR_PWM_CH, IR_PWM_PERIOD/2);
+    } else {
+        pwmEnableChannel(&PWMD3, IR_PWM_CH, 0);
+    }
+}
 
 
 void board_init(void) {
+    // TIM3_CH3
+    static PWMConfig pwmcfg = {
+        IR_PWM_FREQ,
+        IR_PWM_PERIOD,
+        NULL,         /* No callback */
+        {
+            {PWM_OUTPUT_DISABLED, NULL},
+            {PWM_OUTPUT_DISABLED, NULL},
+            {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+            {PWM_OUTPUT_DISABLED, NULL}
+        },
+        0,
+        0
+    };
+
+    pwmStart(&PWMD3, &pwmcfg);
 }
 
