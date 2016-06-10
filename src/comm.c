@@ -54,6 +54,12 @@ static THD_FUNCTION(comm_rx, arg)
         if (buf != NULL) {
             log_info("rx frame: %s", buf);
             telemetry_parse_frame(&telemetry, buf, resp_buf);
+            if (strlen(resp_buf) != 0) {
+                chSequentialStreamWrite(comm_port,
+                                        (const uint8_t *)resp_buf,
+                                        strlen(resp_buf));
+                log_info("sending response: &s", resp_buf);
+            }
         }
         chMtxUnlock(&telemetry_lock);
     }
