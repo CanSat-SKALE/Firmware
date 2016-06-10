@@ -98,6 +98,25 @@ static THD_FUNCTION(periodic_telemetry, arg)
 }
 
 
+static THD_WORKING_AREA(comm_relay_force_deploy_wa, 1024);
+static THD_FUNCTION(comm_relay_force_deploy, arg)
+{
+    (void) arg;
+    chRegSetThreadName("comm_relay_force_deploy");
+    int last_deploy = 0;
+    while (true) {
+        chMtxLock(&telemetry_lock);
+        if (telemetry.force_deploy > last_deploy) {
+            last_deploy = telemetry.force_deploy;
+
+            // TODO send force deploy over IR
+            log_info("sending force deploy to container");
+        }
+        chMtxUnlock(&telemetry_lock);
+        chThdSleepMilliseconds(100);
+    }
+}
+
 void comm_start(BaseSequentialStream *port)
 {
     chMtxObjectInit(&telemetry_lock);
@@ -105,4 +124,5 @@ void comm_start(BaseSequentialStream *port)
     chThdCreateStatic(comm_tx_wa, sizeof(comm_tx_wa), THD_PRIO_COMM, comm_tx, port);
     chThdCreateStatic(comm_rx_wa, sizeof(comm_rx_wa), THD_PRIO_COMM, comm_rx, port);
     chThdCreateStatic(periodic_telemetry_wa, sizeof(periodic_telemetry_wa), THD_PRIO_COMM, periodic_telemetry, NULL);
+    chThdCreateStatic(comm_relay_force_deploy_wa, sizeof(comm_relay_force_deploy_wa), THD_PRIO_COMM, comm_relay_force_deploy, port);
 }
