@@ -542,6 +542,8 @@ void heat_resistor_2(bool en);
 void heat_resistor_3(bool en);
 void heat_resistor_4(bool en);
 
+void deploy(void);
+
 #ifdef __cplusplus
 }
 #endif

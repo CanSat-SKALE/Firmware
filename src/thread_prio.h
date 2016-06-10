@@ -8,5 +8,6 @@
 #define THD_PRIO_SENSOR_H3LIS331DL_READOUT              11
 #define THD_PRIO_COMM                                   20
 #define THD_PRIO_SHELL                                  100
+#define THD_PRIO_DEPLOY                                 21
 
 #endif /* THREAD_PRIO_H */

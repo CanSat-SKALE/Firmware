@@ -113,6 +113,17 @@ void heat_resistor_4(bool en)
 }
 
 
+void deploy(void)
+{
+    led_error(true);
+    chThdSleepSeconds(20);
+    led_error(false);
+    while (true) {
+        chThdSleepMilliseconds(1);
+    }
+}
+
+
 void board_init(void) {
 }
 

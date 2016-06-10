@@ -4,6 +4,9 @@
 #include "chprintf.h"
 #include "blocking_uart_driver.h"
 #include "sensor_readout.h"
+#include "thread_prio.h"
+#include "air_data.h"
+#include "deploy.h"
 
 
 void panic_handler(const char *reason)
@@ -40,6 +43,26 @@ void panic_handler(const char *reason)
 }
 
 
+static THD_WORKING_AREA(deploy_thd_wa, 256);
+static THD_FUNCTION(deploy_thd, arg)
+{
+    (void) arg;
+    static deployment_trigger_t t;
+
+    while (true) {
+        float pressure, temperature;
+        sensor_get_ms5611(&pressure, &temperature);
+        float alt_above_sea = air_data_compute_altitude(pressure);
+        if (deployment_trigger_should_activate_update_10Hz(&t, alt_above_sea)) {
+            log_info("deploy");
+            deploy();
+        }
+
+        chThdSleepMilliseconds(100);
+    }
+}
+
+
 int main(void)
 {
     halInit();
@@ -62,6 +85,11 @@ int main(void)
     chThdSleepMilliseconds(1000);
 
     sensor_readout_start_ms5611();
+
+    chThdSleepMilliseconds(500);
+
+    chThdCreateStatic(deploy_thd_wa, sizeof(deploy_thd_wa),
+                      THD_PRIO_DEPLOY, deploy_thd, NULL);
 
     while (true) {
         float pressure, temp;
