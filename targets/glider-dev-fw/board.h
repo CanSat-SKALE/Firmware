@@ -107,7 +107,7 @@
                             | PIN_MODE_INPUT(     GPIOA_NC_4            )       \
                             | PIN_MODE_INPUT(     GPIOA_NC_5            )       \
                             | PIN_MODE_OUTPUT(    GPIOA_SHDN_5V         )       \
-                            | PIN_MODE_ALTERNATE( GPIOA_SERVO_PWM       )       \
+                            | PIN_MODE_OUTPUT( GPIOA_SERVO_PWM       )       \
                             | PIN_MODE_INPUT(     GPIOA_NC_8            )       \
                             | PIN_MODE_ALTERNATE( GPIOA_GPS_TX          )       \
                             | PIN_MODE_ALTERNATE( GPIOA_GPS_RX          )       \

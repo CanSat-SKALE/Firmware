@@ -230,7 +230,7 @@ include $(PROJROOT)/rules.mk
 PRE_MAKE_ALL_RULE_HOOK:
 	cd $(PROJROOT) && ./git_revision.sh
 
-POST_MAKE_ALL_RULE_HOOK: tests
+POST_MAKE_ALL_RULE_HOOK: 
 
 .PHONY: tests
 tests:

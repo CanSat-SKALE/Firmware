@@ -107,8 +107,8 @@ void pwr_5V(bool en)
 }
 
 #define IR_PWM_CH 3
-#define IR_PWM_FREQ 1000000
-#define IR_PWM_PERIOD 250
+#define IR_PWM_FREQ 4000000
+#define IR_PWM_PERIOD 210 // 16000000/38000
 void IR_pwm(bool en)
 {
     if (en) {

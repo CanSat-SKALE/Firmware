@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-#define NB_SAMPLES_REFERENCE 10
-#define READY_ALTITUDE 300 // [m]
-#define DEPLOYMENT_ALTITUDE 400 // [m]
-#define CLIMB_RATE_FILTER_TIME 5 // [nb samples @10Hz]
+#define NB_SAMPLES_REFERENCE 1
+#define READY_ALTITUDE 400 // [m]
+#define DEPLOYMENT_ALTITUDE 420 // [m]
+#define CLIMB_RATE_FILTER_TIME 50 // [nb samples @10Hz]
 
 #ifdef __cplusplus
 extern "C" {

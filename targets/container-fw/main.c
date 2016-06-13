@@ -53,6 +53,7 @@ static THD_FUNCTION(deploy_thd, arg)
         float pressure, temperature;
         sensor_get_ms5611(&pressure, &temperature);
         float alt_above_sea = air_data_compute_altitude(pressure);
+        log_info("altitude above sea: %f", alt_above_sea);
         if (deployment_trigger_should_activate_update_10Hz(&t, alt_above_sea)) {
             log_info("deploy");
             deploy();
